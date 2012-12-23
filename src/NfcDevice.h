@@ -8,7 +8,7 @@
 #include  <QDBusObjectPath>
 
 // libnfc
-#include <nfc/nfc.h>
+#include <nfc/nfc-types.h>
 // libfreefare
 #include <freefare.h>
 
@@ -25,7 +25,7 @@ class NfcDevice : public QObject
 
 public:
 
-  NfcDevice(const uchar, const nfc_device_desc_t, QMutex*);
+  NfcDevice(const uchar, nfc_connstring, QMutex*);
 
 
   const QString getName();
@@ -60,10 +60,10 @@ protected:
   uchar _id;
 
   /// descriptor of the device
-  nfc_device_desc_t _nfc_device_desc;
 
+  char* _nfc_connstring;
   /// pointer to the device
-  nfc_device_t* _nfc_device;
+  nfc_device* _nfc_device;
 
   /// uuid of the device
   QUuid _uuid;

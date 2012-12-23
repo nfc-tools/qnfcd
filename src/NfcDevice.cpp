@@ -18,11 +18,11 @@
  * @param device the descriptor of the device
  * @param accessLock mutex locking this device's access
  */
-NfcDevice::NfcDevice(const uchar deviceId, const nfc_device_desc_t device,
+NfcDevice::NfcDevice(const uchar deviceId, nfc_connstring device,
   QMutex* accessLock) : _id (deviceId)
 {
-  _nfc_device_desc = device;
-  _nfc_device = nfc_connect(&_nfc_device_desc);
+    _nfc_connstring = device;
+    _nfc_device = nfc_open(NULL, _nfc_connstring);
   _uuid = QUuid::createUuid();
   _dBusObjectPath = QDBusObjectPath("");
   _accessLock = accessLock;
@@ -31,7 +31,7 @@ NfcDevice::NfcDevice(const uchar deviceId, const nfc_device_desc_t device,
 /// get device name
 const QString NfcDevice::getName()
 {
-  return QString(_nfc_device_desc.acDevice);
+    return QString(_nfc_connstring);
 }
 
 /// getter for _uuid
@@ -94,14 +94,14 @@ void NfcDevice::checkAvailableTargets()
   _accessLock->lock();
   if(_nfc_device) {
     /* We are connected to NFC device */
-    nfc_target_t nfc_targets[MAX_TARGET_COUNT];
+        nfc_target nfc_targets[MAX_TARGET_COUNT];
     // List ISO14443A targets
-    nfc_modulation_t nfc_modulation_iso14443a;
+        nfc_modulation nfc_modulation_iso14443a;
     nfc_modulation_iso14443a.nmt = NMT_ISO14443A;
     nfc_modulation_iso14443a.nbr = NBR_106;
 
-    size_t targets_found_count;
-    if (nfc_initiator_list_passive_targets (_nfc_device, nfc_modulation_iso14443a, nfc_targets, MAX_TARGET_COUNT, &targets_found_count)) {
+        size_t targets_found_count = nfc_initiator_list_passive_targets (_nfc_device, nfc_modulation_iso14443a, nfc_targets, MAX_TARGET_COUNT);
+	if(targets_found_count) {
       qDebug() << targets_found_count << "target(s) found.";
     } else {
       nfc_perror (_nfc_device, "nfc_initiator_list_passive_targets");

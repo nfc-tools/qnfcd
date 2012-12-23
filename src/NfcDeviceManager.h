@@ -60,7 +60,7 @@ protected:
 private:
 
   /// register a new device
-  void registerDevice(uchar id, nfc_device_desc_t device);
+  void registerDevice(uchar id, nfc_connstring device);
 
   /// unregister a device
   void unregisterDevice(uchar id, QString device);

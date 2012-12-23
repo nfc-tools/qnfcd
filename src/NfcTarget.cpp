@@ -18,7 +18,7 @@
  * Rev. 1.1 - 21 August 2007
  */
 
-NfcTarget::NfcTarget ( nfc_target_t nfc_target, NfcDevice* device ):
+NfcTarget::NfcTarget ( nfc_target nfc_target, NfcDevice* device ):
   _nfc_target(nfc_target),
   _device(device),
   _uid(QByteArray ((const char*)nfc_target.nti.nai.abtUid, nfc_target.nti.nai.szUidLen).toHex())

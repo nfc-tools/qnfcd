@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 
-#include <nfc/nfc.h>
+#include <nfc/nfc-types.h>
 
 #ifdef __cplusplus
     extern "C" {
@@ -45,10 +45,10 @@ typedef struct {
 } nfcforum_type4_tag_t;
 */
 
-bool transceive(nfc_device_t* pnd, const byte_t* dataIn, const size_t szDataIn, byte_t* dataOut, size_t* pszDataOut);
-bool nfcforum_type4_read(nfc_device_t* pnd, uint16_t offset, const uint8_t length, byte_t* data, size_t *szData);
-bool nfcforum_type4_ndef_tag_application_select(nfc_device_t* pnd);
-bool nfcforum_type4_select(nfc_device_t* pnd, const byte_t fileID[2]);
+bool transceive(nfc_device* pnd, const char* dataIn, const size_t szDataIn, char* dataOut, size_t* pszDataOut);
+bool nfcforum_type4_read(nfc_device* pnd, uint16_t offset, const uint8_t length, char* data, size_t *szData);
+bool nfcforum_type4_ndef_tag_application_select(nfc_device* pnd);
+bool nfcforum_type4_select(nfc_device* pnd, const char fileID[2]);
 
 #ifdef __cplusplus
     }

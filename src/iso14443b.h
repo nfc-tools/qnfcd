@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 
-#include <nfc/nfc.h>
+#include <nfc/nfc-types.h>
 
 #ifdef __cplusplus
     extern "C" {
@@ -31,11 +31,11 @@
 struct iso14443b_tag;
 typedef struct iso14443b_tag *ISO14443bTag;
 
-ISO14443bTag * iso14443b_get_tags (nfc_device_t* pnd);
+ISO14443bTag * iso14443b_get_tags (nfc_device* pnd);
 char * iso14443b_get_tag_uid (ISO14443bTag tag);
 char * iso14443b_get_tag_name (ISO14443bTag tag);
 ISO14443bTag iso14443b_tag_new (void);
-void iso14443b_configure (nfc_device_t* pnd);
+void iso14443b_configure (nfc_device* pnd);
 void iso14443b_free_tag (ISO14443bTag tag);
 void iso14443b_tag_free (ISO14443bTag tag);
 int iso14443b_connect (ISO14443bTag tag);

@@ -1,13 +1,13 @@
 #include "NfcDeviceManager.h"
 
-#include <nfc/nfc.h>
+#include <nfc/nfc-types.h>
 
 #include "NfcDevice.h"
 #include "nfcdeviceadaptor.h"
 
 #define MAX_NFC_INITIATOR_COUNT 16
 
-static nfc_device_desc_t known_devices_desc[MAX_NFC_INITIATOR_COUNT];
+static nfc_connstring known_devices_desc[MAX_NFC_INITIATOR_COUNT];
 
 NfcDeviceManager::NfcDeviceManager()
 {
@@ -48,22 +48,22 @@ void NfcDeviceManager::checkAvailableDevices()
 {
   _accessLock->lock();
   // A new array is not required at each call (hence the 'static')
-  static nfc_device_desc_t polled_devices_desc[MAX_NFC_INITIATOR_COUNT];
+  static nfc_connstring polled_devices_desc[MAX_NFC_INITIATOR_COUNT];
   size_t found = 0;
 
-  nfc_list_devices (polled_devices_desc, MAX_NFC_INITIATOR_COUNT, &found);
+  found = nfc_list_devices (NULL, polled_devices_desc, MAX_NFC_INITIATOR_COUNT);
 
   /* Look for disapeared devices */
   for (size_t i = 0; i< MAX_NFC_INITIATOR_COUNT; i++) {
-    if (known_devices_desc[i].acDevice[0]) {
+    if (known_devices_desc[i][0]) {
       bool still_here = false;
       for (size_t n = 0; n < found; n++) {
-        if (0 == strcmp(known_devices_desc[i].acDevice, polled_devices_desc[n].acDevice))
+        if (0 == strcmp(known_devices_desc[i], polled_devices_desc[n]))
           still_here = true;
       }
       if (!still_here) {
-        unregisterDevice (i, known_devices_desc[i].acDevice);
-        known_devices_desc[i].acDevice[0] = '\0';
+        unregisterDevice (i, known_devices_desc[i]);
+        known_devices_desc[i][0] = '\0';
       }
     }
   }
@@ -74,15 +74,15 @@ void NfcDeviceManager::checkAvailableDevices()
     int n;
 
     for (n=0; n<MAX_NFC_INITIATOR_COUNT; n++) {
-      if (strcmp(polled_devices_desc[i].acDevice, known_devices_desc[n].acDevice) == 0)
+      if (strcmp(polled_devices_desc[i], known_devices_desc[n]) == 0)
         already_known = true;
     }
 
     if (!already_known) {
       for (n=0; n < MAX_NFC_INITIATOR_COUNT; n++) {
-        if (known_devices_desc[n].acDevice[0] == '\0') {
+        if (known_devices_desc[n][0] == '\0') {
           registerDevice(n, polled_devices_desc[i]);
-          strncpy (known_devices_desc[n].acDevice , polled_devices_desc[i].acDevice,DEVICE_NAME_LENGTH);
+          strncpy (known_devices_desc[n] , polled_devices_desc[i],1024);
           break;
         }
       }
@@ -109,9 +109,9 @@ void NfcDeviceManager::timerEvent(QTimerEvent *event)
   checkAvailableTargets();
 }
 
-void NfcDeviceManager::registerDevice(uchar id, nfc_device_desc_t device)
+void NfcDeviceManager::registerDevice(uchar id, nfc_connstring device)
 {
-  QString deviceName = QString(device.acDevice);
+  QString deviceName = QString(device);
   qDebug() << "Register new device \"" << deviceName << "\" with ID: " << id << "...";
   NfcDevice* nfcDevice = new NfcDevice(id, device, _accessLock);
   _devices << nfcDevice;

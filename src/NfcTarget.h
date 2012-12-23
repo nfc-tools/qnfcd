@@ -45,7 +45,7 @@ public:
     };
 
     /// construct a NfcTarget from the given tag and mutex
-    NfcTarget(nfc_target_t, NfcDevice* );
+    NfcTarget(nfc_target, NfcDevice* );
 
     ~NfcTarget();
 
@@ -91,7 +91,7 @@ protected:
     NfcDevice* _device;
 
     /// libnfc's nfc_target_t struct
-    nfc_target_t _nfc_target;
+    nfc_target _nfc_target;
 
 private:
 
