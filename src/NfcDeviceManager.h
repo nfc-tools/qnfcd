@@ -21,6 +21,7 @@ class NfcDeviceManager : public QObject
 
 public:
   NfcDeviceManager();
+  ~NfcDeviceManager();
 
 public Q_SLOTS:
 
@@ -67,6 +68,9 @@ private:
 
   /// QList containing the devices
   QList<NfcDevice*> _devices;
+
+  /// libnfc's context pointer
+  nfc_context *_context;
 };
 
 #endif // NFCDEVICEMANAGER_H

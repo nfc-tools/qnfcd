@@ -11,8 +11,14 @@ static nfc_connstring known_devices_desc[MAX_NFC_INITIATOR_COUNT];
 
 NfcDeviceManager::NfcDeviceManager()
 {
+  nfc_init (&_context);
   startTimer(1000);
   _accessLock = new QMutex(QMutex::Recursive);
+}
+
+NfcDeviceManager::~NfcDeviceManager()
+{
+  nfc_exit (_context);
 }
 
 QStringList NfcDeviceManager::getDeviceList()
@@ -51,7 +57,7 @@ void NfcDeviceManager::checkAvailableDevices()
   static nfc_connstring polled_devices_desc[MAX_NFC_INITIATOR_COUNT];
   size_t found = 0;
 
-  found = nfc_list_devices (NULL, polled_devices_desc, MAX_NFC_INITIATOR_COUNT);
+  found = nfc_list_devices (_context, polled_devices_desc, MAX_NFC_INITIATOR_COUNT);
 
   /* Look for disapeared devices */
   for (size_t i = 0; i< MAX_NFC_INITIATOR_COUNT; i++) {
@@ -113,7 +119,7 @@ void NfcDeviceManager::registerDevice(uchar id, nfc_connstring device)
 {
   QString deviceName = QString(device);
   qDebug() << "Register new device \"" << deviceName << "\" with ID: " << id << "...";
-  NfcDevice* nfcDevice = new NfcDevice(id, device, _accessLock);
+  NfcDevice* nfcDevice = new NfcDevice(id, _context, device, _accessLock);
   _devices << nfcDevice;
 
   new NfcDeviceAdaptor(nfcDevice);

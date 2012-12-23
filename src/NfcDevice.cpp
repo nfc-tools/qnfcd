@@ -18,11 +18,11 @@
  * @param device the descriptor of the device
  * @param accessLock mutex locking this device's access
  */
-NfcDevice::NfcDevice(const uchar deviceId, nfc_connstring device,
+NfcDevice::NfcDevice(const uchar deviceId, nfc_context *context, nfc_connstring device,
   QMutex* accessLock) : _id (deviceId)
 {
-    _nfc_connstring = device;
-    _nfc_device = nfc_open(NULL, _nfc_connstring);
+  _nfc_connstring = device;
+  _nfc_device = nfc_open(context, _nfc_connstring);
   _uuid = QUuid::createUuid();
   _dBusObjectPath = QDBusObjectPath("");
   _accessLock = accessLock;

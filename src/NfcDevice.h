@@ -25,8 +25,7 @@ class NfcDevice : public QObject
 
 public:
 
-  NfcDevice(const uchar, nfc_connstring, QMutex*);
-
+  NfcDevice(const uchar, nfc_context*, nfc_connstring, QMutex*);
 
   const QString getName();
 
