@@ -95,9 +95,9 @@ nfcforum_type4_ndef_tag_application_select(nfc_device_t* pnd)
 }
 
 bool
-nfcforum_type4_select(nfc_device_t* pnd, const byte_t fileID[2])
+nfcforum_type4_select(nfc_device_t* pnd, const byte_t *fileID)
 {
   byte_t select_cmd[] = { CLEAR_TEXT, SELECT, 0x00, 0x00, 0x02, 0x00, 0x00 };
-  memcpy(select_cmd + 5, fileID, sizeof(fileID));
+  memcpy(select_cmd + 5, fileID, 2);
   return nfcforum_type4_transceive(pnd, select_cmd,sizeof(select_cmd), NULL, NULL);
 }
